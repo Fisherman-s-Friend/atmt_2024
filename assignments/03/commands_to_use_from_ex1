@@ -1,0 +1,24 @@
+## Training
+
+python train.py \
+--data data/en-fr/prepared \
+--source-lang fr \
+--target-lang en \
+--save-dir assignments/03/model1/checkpoints
+
+## In-domain Evaluation
+python translate.py \
+--data data/en-fr/prepared \
+--dicts data/en-fr/prepared \
+--checkpoint-path assignments/03/model1/checkpoints/checkpoint_best.pt \
+--output assignments/03/model1/translations.txt
+
+## postprocess
+bash scripts/postprocess.sh \
+assignments/03/model1/translations.txt \
+assignments/01/model1/translations.p.txt en
+
+eval sacrebleu
+cat \
+assignments/03/model1/translations.p.txt \
+| sacrebleu data/en-fr/raw/test.en
