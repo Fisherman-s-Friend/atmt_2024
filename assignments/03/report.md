@@ -20,3 +20,18 @@ neuron dropout in the paper they used 0.5
 reduce batch size :     parser.add_argument('--batch-size', default=1, type=int, help='maximum number of sentences in a batch')
 (word) dropout in the paper they used 0.3
 model depth 
+
+next time
+
+# Report
+
+## Experiment Setup
+### Strategy 1
+### Strategy 2
+
+## Results
+
+## Discussion
+
+## Conclusion
+
