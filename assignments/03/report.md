@@ -17,6 +17,6 @@ adapting hyps:
 
 most promising: probably easy do modify in code: 
 neuron dropout in the paper they used 0.5
-reduce batch size
+reduce batch size :     parser.add_argument('--batch-size', default=1, type=int, help='maximum number of sentences in a batch')
 (word) dropout in the paper they used 0.3
 model depth 
