@@ -4,10 +4,36 @@ python train.py \
 --data data/en-fr/prepared \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/model1/checkpoints
---arch lstm\
---encoder_embed_dim 32\
---train-on-tiny\
+--save-dir assignments/03/model32/checkpoints \
+--encoder-embed-dim 32 \
+--encoder-hidden-size 32 \
+--decoder-embed-dim 32 \
+--decoder-hidden-size 64 \
+--lr 0.0005 \
+--decoder-dropout-in 0.5 \
+--decoder-dropout-out 0.5 \
+--encoder-dropout-in 0.5 \
+--encoder-dropout-out 0.5 \
+--cuda
+
+python train.py \
+--data data/en-fr/prepared \
+--source-lang fr \
+--target-lang en \
+--save-dir assignments/03/model64/checkpoints \
+--encoder-embed-dim 64 \
+--encoder-hidden-size 64 \
+--decoder-embed-dim 64 \
+--decoder-hidden-size 128 \
+--lr 0.0005 \
+--decoder-dropout-in 0.5 \
+--decoder-dropout-out 0.5 \
+--encoder-dropout-in 0.5 \
+--encoder-dropout-out 0.5 \
+--cuda
+
+python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --save-dir assignments/03/model1/checkpoints --arch lstm --encoder-embed-dim 64 --lr 0.0005 --train-on-tiny
+
 
 ## In-domain Evaluation
 python translate.py \
@@ -19,7 +45,7 @@ python translate.py \
 ## postprocess
 bash scripts/postprocess.sh \
 assignments/03/model1/translations.txt \
-assignments/01/model1/translations.p.txt en
+assignments/03/model1/translations.p.txt en
 
 eval sacrebleu
 cat \

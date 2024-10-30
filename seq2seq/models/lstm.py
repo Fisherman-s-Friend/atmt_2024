@@ -92,8 +92,8 @@ class LSTMEncoder(Seq2SeqEncoder):
 
         super().__init__(dictionary)
 
-        self.dropout_in = dropout_in
-        self.dropout_out = dropout_out
+        self.dropout_in = float(dropout_in)
+        self.dropout_out = float(dropout_out)
         self.bidirectional = bidirectional
         self.hidden_size = hidden_size
         self.output_dim = 2 * hidden_size if bidirectional else hidden_size
