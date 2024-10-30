@@ -86,7 +86,7 @@ Based on the strategies proposed in the paper and the hyperparameter used by the
 trained on 10'000:
 
 * learning rate: 0.0005 # the paper used this rate, without giving further details
-* batchsize: 1 
+* batchsize: 8 # but it  to increase training speed, even tough the paper suggested to use smaller batchsizes
 * max tokens: 1000 # as the paper, however since the reference model used 1 as batchsize (sentence per batch), this might have no influence at all
 * bidirectional: True # no change as they suggested to use a bidirectional instead of uni-directional 
 
@@ -118,8 +118,30 @@ decoder
 * learning rate: 0.0005
 * batch size: 1000 tokens
 
-Based on the strategies proposed in  the paper, we will adapt the following hyperparameters:
-
+{
+ "name": "BLEU",
+ "score": 0.6,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "17.0/1.4/0.2/0.0 (BP = 1.000 ratio = 1.695 hyp_len = 6598 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3"
+}
+(venv_new_new) cat assignments/03/model64/translations.p.txt | sacrebleu data/en-fr/raw/test.en
+{
+ "name": "BLEU",
+ "score": 0.6,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "17.0/1.4/0.2/0.0 (BP = 1.000 ratio = 1.695 hyp_len = 6598 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3
 
 @register_model_architecture('lstm', 'lstm')
 def base_architecture(args):

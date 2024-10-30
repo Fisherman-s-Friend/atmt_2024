@@ -10,6 +10,8 @@ python train.py \
 --decoder-embed-dim 32 \
 --decoder-hidden-size 64 \
 --lr 0.0005 \
+--max-token 1000 \
+--batch-size 8 \
 --decoder-dropout-in 0.5 \
 --decoder-dropout-out 0.5 \
 --encoder-dropout-in 0.5 \
@@ -25,7 +27,8 @@ python train.py \
 --encoder-hidden-size 64 \
 --decoder-embed-dim 64 \
 --decoder-hidden-size 128 \
---lr 0.0005 \
+--max-token 1000 \
+--batch-size 8 \
 --decoder-dropout-in 0.5 \
 --decoder-dropout-out 0.5 \
 --encoder-dropout-in 0.5 \
