@@ -9,4 +9,14 @@ commands did you use? How did you evaluate your models? ...)
 visualization, qualitative analysis, ...)
 
 • A final remark on what you learned in this assignment and what you would do differently
-next tim
+next time
+
+adapting hyps: 
+![image](https://github.com/user-attachments/assets/06c8d925-b035-4b5e-bd7b-546fb587a5bc)
+([Sennrich and Zhang, 2019, p. 4])
+
+most promising: probably easy do modify in code: 
+neuron dropout in the paper they used 0.5
+reduce batch size
+(word) dropout in the paper they used 0.3
+model depth 
