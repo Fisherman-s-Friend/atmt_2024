@@ -44,16 +44,17 @@ python translate.py \
 --data data/en-fr/prepared \
 --dicts data/en-fr/prepared \
 --checkpoint-path assignments/03/model256/checkpoints/checkpoint_best.pt \
---output assignments/03/model1/translations.txt \
---cuda
+--output assignments/03/model256/translations.txt \
+--cuda \
+--batch-size 25
 
 
 ## postprocess
 bash scripts/postprocess.sh \
-assignments/03/model1/translations.txt \
-assignments/03/model1/translations.p.txt en
+assignments/03/model256/translations.txt \
+assignments/03/model256/translations.p.txt en
 
 eval sacrebleu
 cat \
-assignments/03/model1/translations.p.txt \
+assignments/03/model256/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en
