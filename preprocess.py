@@ -13,15 +13,25 @@ import pickle
 
 from seq2seq import utils
 from seq2seq.data.dictionary import Dictionary
+from tokenizers import Tokenizer
 
+tokenizer = Tokenizer.from_file("/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpesmall/tokenizer.json")
 SPACE_NORMALIZER = re.compile("\s+")
 
 
 def word_tokenize(line):
+    if args.tokenizer == 'bpe':
+        return _bpe_tokenize(line)
+    else:
+        return _word_tokenize(line)
+
+def _word_tokenize(line):
     line = SPACE_NORMALIZER.sub(" ", line)
     line = line.strip()
     return line.split()
 
+def _bpe_tokenize(line):
+    return tokenizer.encode(line).tokens
 
 def get_args():
     parser = argparse.ArgumentParser('Data pre-processing)')
@@ -43,6 +53,7 @@ def get_args():
     parser.add_argument('--vocab-src', default=None, type=str, help='path to dictionary')
     parser.add_argument('--vocab-trg', default=None, type=str, help='path to dictionary')
     parser.add_argument('--quiet', action='store_true', help='no logging')
+    parser.add_argument('--tokenizer', default='word', choices=['word', 'bpe'], help='tokenizer type')
 
     return parser.parse_args()
 
