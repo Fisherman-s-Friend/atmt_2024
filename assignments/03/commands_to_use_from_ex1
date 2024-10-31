@@ -22,13 +22,14 @@ python train.py \
 --data data/en-fr/prepared \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/model64/checkpoints \
---encoder-embed-dim 64 \
---encoder-hidden-size 64 \
---decoder-embed-dim 64 \
---decoder-hidden-size 128 \
+--save-dir assignments/03/model256/checkpoints \
+--encoder-embed-dim 256 \
+--encoder-hidden-size 256 \
+--decoder-embed-dim 256 \
+--decoder-hidden-size 512 \
 --max-token 1000 \
 --batch-size 8 \
+--lr 0.0005 \
 --decoder-dropout-in 0.5 \
 --decoder-dropout-out 0.5 \
 --encoder-dropout-in 0.5 \
@@ -42,8 +43,10 @@ python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --s
 python translate.py \
 --data data/en-fr/prepared \
 --dicts data/en-fr/prepared \
---checkpoint-path assignments/03/model1/checkpoints/checkpoint_best.pt \
---output assignments/03/model1/translations.txt
+--checkpoint-path assignments/03/model256/checkpoints/checkpoint_best.pt \
+--output assignments/03/model1/translations.txt \
+--cuda
+
 
 ## postprocess
 bash scripts/postprocess.sh \
