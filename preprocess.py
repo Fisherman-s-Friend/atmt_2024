@@ -15,7 +15,7 @@ from seq2seq import utils
 from seq2seq.data.dictionary import Dictionary
 from tokenizers import Tokenizer
 
-tokenizer = Tokenizer.from_file("/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpesmall/tokenizer.json")
+tokenizer = Tokenizer.from_file("/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpesmall_apos/tokenizer.json")
 SPACE_NORMALIZER = re.compile("\s+")
 
 

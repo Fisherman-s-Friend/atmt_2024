@@ -1,10 +1,10 @@
 ## Training
 
 python train.py \
---data data/en-fr/bpesmall \
+--data data/en-fr/bpenew \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/modelbpe64small/checkpoints \
+--save-dir assignments/03/modelbpe64new/checkpoints \
 --encoder-embed-dim 64 \
 --encoder-hidden-size 64 \
 --decoder-embed-dim 64 \
@@ -41,22 +41,22 @@ python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --s
 
 ## In-domain Evaluation
 python translate.py \
---data data/en-fr/bpe \
---dicts data/en-fr/bpe \
---checkpoint-path assignments/03/modelbpe128/checkpoints/checkpoint_best.pt \
---output assignments/03/modelbpe128/translations.txt \
+--data data/en-fr/bpenew \
+--dicts data/en-fr/bpenew \
+--checkpoint-path assignments/03/modelbpe64new/checkpoints/checkpoint_best.pt \
+--output assignments/03/modelbpe64new/translations.txt \
 --cuda \
 --batch-size 25
 
 
 ## postprocess
 bash scripts/postprocess.sh \
-assignments/03/modelbpe128/translations.txt \
-assignments/03/modelbpe128/translations.p.txt en
+assignments/03/modelbpe64new/translations.txt \
+assignments/03/modelbpe64new/translations.p.txt en
 
 eval sacrebleu
 cat \
-assignments/03/modelbpe128/translations.p.txt \
+assignments/03/modelbpe64small/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en
 
 
@@ -67,7 +67,7 @@ python preprocess.py \
     --train-prefix data/en-fr/preprocessed/train \
     --valid-prefix data/en-fr/preprocessed/valid \
     --test-prefix data/en-fr/preprocessed/test \
-    --dest-dir data/en-fr/bpesmall \
+    --dest-dir data/en-fr/bpenew\
     --tokenizer bpe \
     --threshold-src 1 \
     --threshold-tgt 1 \
