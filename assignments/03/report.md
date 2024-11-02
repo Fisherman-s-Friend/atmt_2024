@@ -81,8 +81,8 @@ decoder
 For the assigment we are confronted with a setting of 10'000 sentences, which is an even smaller dataset, than used in the paper.
 We will adapt the hyperparameters of the reference model to the strategies proposed in the paper and compare the performance of the adapted model to the reference model.
 
-Based on the strategies proposed in the paper and the hyperparameter used by the reference model, we  adapt the following hyperparameters:
-##### Adapted model
+Based on the strategies proposed in the paper and the hyperparameter used by the reference model, we adapt the following hyperparameters in a first setting.:
+##### Adapted model 1 
 trained on 10'000:
 
 * learning rate: 0.0005 # the paper used this rate, without giving further details
@@ -105,6 +105,80 @@ decoder
 * decoder dropout out: 0.5 # as the paper
 * use attention: True # 
 
+However, the model performed quite poorly. We think, that the architecture itself is already on the smallest possible side to learn anything at all,
+and the additional higher rate of drop out, let it perform even worse.
+
+"name": "BLEU",
+ "score": 0.6,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "17.0/1.4/0.2/0.0 (BP = 1.000 ratio = 1.695 hyp_len = 6598 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3
+
+##### Adapted Model two, larger hidden sizes
+For the second try, we kept all the hyperparameters fix, we only increased the embedding sizes, and the encoder hidden size to 128, and the dencoder hidden size to 256
+
+{
+ "name": "BLEU",
+ "score": 13.9,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "44.2/19.6/9.6/4.5 (BP = 1.000 ratio = 1.214 hyp_len = 4726 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3"
+}
+still the model performed worse than the Baseline model. 
+We did try again, with a 256 hidden size and a 512 hidden size model. Interstingly, the 256 hidden size model showed improvement, but the 512 performed even worse
+### 256
+ "name": "BLEU",
+ "score": 15.2,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "44.9/20.6/10.6/5.4 (BP = 1.000 ratio = 1.258 hyp_len = 4898 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3"
+### 512
+{
+ "name": "BLEU",
+ "score": 15.2,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "44.9/20.6/10.6/5.4 (BP = 1.000 ratio = 1.258 hyp_len = 4898 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3"
+}
+(venv_new_new) (base) popos@pop-os:~/PycharmProjects/atmt_2024_shared$ cat assignments/03/model512/translations.p.txt | sacrebleu data/en-fr/raw/test.en
+{
+ "name": "BLEU",
+ "score": 7.8,
+ "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
+ "verbose_score": "32.9/11.6/4.9/2.0 (BP = 1.000 ratio = 1.530 hyp_len = 5954 ref_len = 3892)",
+ "nrefs": "1",
+ "case": "mixed",
+ "eff": "no",
+ "tok": "13a",
+ "smooth": "exp",
+ "version": "2.4.3"
+}
+but none of them achieved the Baseline score.
+
+
+
+
+
 ##### Model in paper trained on 100'000 used in for the best performing config:
 * for both encoder and decoder:
 * embedding size: 512
@@ -118,30 +192,6 @@ decoder
 * learning rate: 0.0005
 * batch size: 1000 tokens
 
-{
- "name": "BLEU",
- "score": 0.6,
- "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
- "verbose_score": "17.0/1.4/0.2/0.0 (BP = 1.000 ratio = 1.695 hyp_len = 6598 ref_len = 3892)",
- "nrefs": "1",
- "case": "mixed",
- "eff": "no",
- "tok": "13a",
- "smooth": "exp",
- "version": "2.4.3"
-}
-(venv_new_new) cat assignments/03/model64/translations.p.txt | sacrebleu data/en-fr/raw/test.en
-{
- "name": "BLEU",
- "score": 0.6,
- "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3",
- "verbose_score": "17.0/1.4/0.2/0.0 (BP = 1.000 ratio = 1.695 hyp_len = 6598 ref_len = 3892)",
- "nrefs": "1",
- "case": "mixed",
- "eff": "no",
- "tok": "13a",
- "smooth": "exp",
- "version": "2.4.3
 
 
 ### Strategy 2

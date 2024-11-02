@@ -4,11 +4,11 @@ python train.py \
 --data data/en-fr/bpenew \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/modelbpe64new/checkpoints \
---encoder-embed-dim 64 \
---encoder-hidden-size 64 \
---decoder-embed-dim 64 \
---decoder-hidden-size 128 \
+--save-dir assignments/03/modelbpe128new/checkpoints \
+--encoder-embed-dim 128 \
+--encoder-hidden-size 128 \
+--decoder-embed-dim 128 \
+--decoder-hidden-size 256 \
 --lr 0.0003 \
 --max-token 1000 \
 --batch-size 8 \
@@ -40,6 +40,7 @@ python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --s
 
 
 ## In-domain Evaluation
+´´´
 python translate.py \
 --data data/en-fr/bpenew \
 --dicts data/en-fr/bpenew \
@@ -47,7 +48,7 @@ python translate.py \
 --output assignments/03/modelbpe64new/translations.txt \
 --cuda \
 --batch-size 25
-
+´´´
 
 ## postprocess
 bash scripts/postprocess.sh \
@@ -56,7 +57,7 @@ assignments/03/modelbpe64new/translations.p.txt en
 
 eval sacrebleu
 cat \
-assignments/03/modelbpe64small/translations.p.txt \
+assignments/03/model128/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en
 
 
