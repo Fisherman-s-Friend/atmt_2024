@@ -15,7 +15,7 @@ from seq2seq import utils
 from seq2seq.data.dictionary import Dictionary
 from tokenizers import Tokenizer
 
-tokenizer = Tokenizer.from_file("data/en-fr/tokenizer.json")
+tokenizer = Tokenizer.from_file("data/en-fr/bpe/tokenizer.json")
 SPACE_NORMALIZER = re.compile("\s+")
 
 
@@ -33,7 +33,7 @@ def _word_tokenize(line):
 
 
 def _bpe_tokenize(line):
-    return tokenizer.encode(line).tokens
+    return tokenizer.encode(line).ids
 
 
 def get_args():
