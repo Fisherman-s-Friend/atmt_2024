@@ -15,45 +15,80 @@ from seq2seq import utils
 from seq2seq.data.dictionary import Dictionary
 from tokenizers import Tokenizer
 
-tokenizer = Tokenizer.from_file("/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpesmall_apos/tokenizer.json")
+tokenizer = Tokenizer.from_file("data/en-fr/tokenizer.json")
 SPACE_NORMALIZER = re.compile("\s+")
 
 
 def word_tokenize(line):
-    if args.tokenizer == 'bpe':
+    if args.tokenizer == "bpe":
         return _bpe_tokenize(line)
     else:
         return _word_tokenize(line)
+
 
 def _word_tokenize(line):
     line = SPACE_NORMALIZER.sub(" ", line)
     line = line.strip()
     return line.split()
 
+
 def _bpe_tokenize(line):
     return tokenizer.encode(line).tokens
 
+
 def get_args():
-    parser = argparse.ArgumentParser('Data pre-processing)')
-    parser.add_argument('--source-lang', default=None, metavar='SRC', help='source language')
-    parser.add_argument('--target-lang', default=None, metavar='TGT', help='target language')
+    parser = argparse.ArgumentParser("Data pre-processing)")
+    parser.add_argument(
+        "--source-lang", default=None, metavar="SRC", help="source language"
+    )
+    parser.add_argument(
+        "--target-lang", default=None, metavar="TGT", help="target language"
+    )
 
-    parser.add_argument('--train-prefix', default=None, metavar='FP', help='train file prefix')
-    parser.add_argument('--tiny-train-prefix', default=None, metavar='FP', help='tiny train file prefix')
-    parser.add_argument('--valid-prefix', default=None, metavar='FP', help='valid file prefix')
-    parser.add_argument('--test-prefix', default=None, metavar='FP', help='test file prefix')
-    parser.add_argument('--dest-dir', default='data-bin', metavar='DIR', help='destination dir')
+    parser.add_argument(
+        "--train-prefix", default=None, metavar="FP", help="train file prefix"
+    )
+    parser.add_argument(
+        "--tiny-train-prefix", default=None, metavar="FP", help="tiny train file prefix"
+    )
+    parser.add_argument(
+        "--valid-prefix", default=None, metavar="FP", help="valid file prefix"
+    )
+    parser.add_argument(
+        "--test-prefix", default=None, metavar="FP", help="test file prefix"
+    )
+    parser.add_argument(
+        "--dest-dir", default="data-bin", metavar="DIR", help="destination dir"
+    )
 
-    parser.add_argument('--threshold-src', default=2, type=int,
-                        help='map words appearing less than threshold times to unknown')
-    parser.add_argument('--num-words-src', default=-1, type=int, help='number of source words to retain')
-    parser.add_argument('--threshold-tgt', default=2, type=int,
-                        help='map words appearing less than threshold times to unknown')
-    parser.add_argument('--num-words-tgt', default=-1, type=int, help='number of target words to retain')
-    parser.add_argument('--vocab-src', default=None, type=str, help='path to dictionary')
-    parser.add_argument('--vocab-trg', default=None, type=str, help='path to dictionary')
-    parser.add_argument('--quiet', action='store_true', help='no logging')
-    parser.add_argument('--tokenizer', default='word', choices=['word', 'bpe'], help='tokenizer type')
+    parser.add_argument(
+        "--threshold-src",
+        default=2,
+        type=int,
+        help="map words appearing less than threshold times to unknown",
+    )
+    parser.add_argument(
+        "--num-words-src", default=-1, type=int, help="number of source words to retain"
+    )
+    parser.add_argument(
+        "--threshold-tgt",
+        default=2,
+        type=int,
+        help="map words appearing less than threshold times to unknown",
+    )
+    parser.add_argument(
+        "--num-words-tgt", default=-1, type=int, help="number of target words to retain"
+    )
+    parser.add_argument(
+        "--vocab-src", default=None, type=str, help="path to dictionary"
+    )
+    parser.add_argument(
+        "--vocab-trg", default=None, type=str, help="path to dictionary"
+    )
+    parser.add_argument("--quiet", action="store_true", help="no logging")
+    parser.add_argument(
+        "--tokenizer", default="word", choices=["word", "bpe"], help="tokenizer type"
+    )
 
     return parser.parse_args()
 
@@ -61,43 +96,72 @@ def get_args():
 def main(args):
     os.makedirs(args.dest_dir, exist_ok=True)
     if not args.vocab_src:
-        src_dict = build_dictionary([args.train_prefix + '.' + args.source_lang])
+        src_dict = build_dictionary([args.train_prefix + "." + args.source_lang])
 
         src_dict.finalize(threshold=args.threshold_src, num_words=args.num_words_src)
-        src_dict.save(os.path.join(args.dest_dir, 'dict.' + args.source_lang))
+        src_dict.save(os.path.join(args.dest_dir, "dict." + args.source_lang))
         if not args.quiet:
-            logging.info('Built a source dictionary ({}) with {} words'.format(args.source_lang, len(src_dict)))
+            logging.info(
+                "Built a source dictionary ({}) with {} words".format(
+                    args.source_lang, len(src_dict)
+                )
+            )
 
     else:
         src_dict = Dictionary.load(args.vocab_src)
         if not args.quiet:
-            logging.info('Loaded a source dictionary ({}) with {} words'.format(args.target_lang, len(src_dict)))
+            logging.info(
+                "Loaded a source dictionary ({}) with {} words".format(
+                    args.target_lang, len(src_dict)
+                )
+            )
 
     if not args.vocab_trg:
-        tgt_dict = build_dictionary([args.train_prefix + '.' + args.target_lang])
+        tgt_dict = build_dictionary([args.train_prefix + "." + args.target_lang])
 
         tgt_dict.finalize(threshold=args.threshold_tgt, num_words=args.num_words_tgt)
-        tgt_dict.save(os.path.join(args.dest_dir, 'dict.' + args.target_lang))
+        tgt_dict.save(os.path.join(args.dest_dir, "dict." + args.target_lang))
         if not args.quiet:
-            logging.info('Built a target dictionary ({}) with {} words'.format(args.target_lang, len(tgt_dict)))
+            logging.info(
+                "Built a target dictionary ({}) with {} words".format(
+                    args.target_lang, len(tgt_dict)
+                )
+            )
 
     else:
         tgt_dict = Dictionary.load(args.vocab_trg)
         if not args.quiet:
-            logging.info('Loaded a target dictionary ({}) with {} words'.format(args.target_lang, len(tgt_dict)))
+            logging.info(
+                "Loaded a target dictionary ({}) with {} words".format(
+                    args.target_lang, len(tgt_dict)
+                )
+            )
 
     def make_split_datasets(lang, dictionary):
         if args.train_prefix is not None:
-            make_binary_dataset(args.train_prefix + '.' + lang, os.path.join(args.dest_dir, 'train.' + lang),
-                                dictionary)
+            make_binary_dataset(
+                args.train_prefix + "." + lang,
+                os.path.join(args.dest_dir, "train." + lang),
+                dictionary,
+            )
         if args.tiny_train_prefix is not None:
-            make_binary_dataset(args.tiny_train_prefix + '.' + lang, os.path.join(args.dest_dir, 'tiny_train.' + lang),
-                                dictionary)
+            make_binary_dataset(
+                args.tiny_train_prefix + "." + lang,
+                os.path.join(args.dest_dir, "tiny_train." + lang),
+                dictionary,
+            )
         if args.valid_prefix is not None:
-            make_binary_dataset(args.valid_prefix + '.' + lang, os.path.join(args.dest_dir, 'valid.' + lang),
-                                dictionary)
+            make_binary_dataset(
+                args.valid_prefix + "." + lang,
+                os.path.join(args.dest_dir, "valid." + lang),
+                dictionary,
+            )
         if args.test_prefix is not None:
-            make_binary_dataset(args.test_prefix + '.' + lang, os.path.join(args.dest_dir, 'test.' + lang), dictionary)
+            make_binary_dataset(
+                args.test_prefix + "." + lang,
+                os.path.join(args.dest_dir, "test." + lang),
+                dictionary,
+            )
 
     make_split_datasets(args.source_lang, src_dict)
     make_split_datasets(args.target_lang, tgt_dict)
@@ -106,7 +170,7 @@ def main(args):
 def build_dictionary(filenames, tokenize=word_tokenize):
     dictionary = Dictionary()
     for filename in filenames:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             for line in file:
                 for symbol in word_tokenize(line.strip()):
                     dictionary.add_word(symbol)
@@ -114,7 +178,9 @@ def build_dictionary(filenames, tokenize=word_tokenize):
     return dictionary
 
 
-def make_binary_dataset(input_file, output_file, dictionary, tokenize=word_tokenize, append_eos=True):
+def make_binary_dataset(
+    input_file, output_file, dictionary, tokenize=word_tokenize, append_eos=True
+):
     nsent, ntok = 0, 0
     unk_counter = collections.Counter()
 
@@ -123,23 +189,32 @@ def make_binary_dataset(input_file, output_file, dictionary, tokenize=word_token
             unk_counter.update([word])
 
     tokens_list = []
-    with open(input_file, 'r') as inf:
+    with open(input_file, "r") as inf:
         for line in inf:
-            tokens = dictionary.binarize(line.strip(), word_tokenize, append_eos, consumer=unk_consumer)
+            tokens = dictionary.binarize(
+                line.strip(), word_tokenize, append_eos, consumer=unk_consumer
+            )
             nsent, ntok = nsent + 1, ntok + len(tokens)
             tokens_list.append(tokens.numpy())
 
-    with open(output_file, 'wb') as outf:
+    with open(output_file, "wb") as outf:
         pickle.dump(tokens_list, outf, protocol=pickle.DEFAULT_PROTOCOL)
         if not args.quiet:
-            logging.info('Built a binary dataset for {}: {} sentences, {} tokens, {:.3f}% replaced by unknown token'.format(
-            input_file, nsent, ntok, 100.0 * sum(unk_counter.values()) / ntok, dictionary.unk_word))
+            logging.info(
+                "Built a binary dataset for {}: {} sentences, {} tokens, {:.3f}% replaced by unknown token".format(
+                    input_file,
+                    nsent,
+                    ntok,
+                    100.0 * sum(unk_counter.values()) / ntok,
+                    dictionary.unk_word,
+                )
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = get_args()
     if not args.quiet:
         utils.init_logging(args)
-        logging.info('COMMAND: %s' % ' '.join(sys.argv))
-        logging.info('Arguments: {}'.format(vars(args)))
+        logging.info("COMMAND: %s" % " ".join(sys.argv))
+        logging.info("Arguments: {}".format(vars(args)))
     main(args)
