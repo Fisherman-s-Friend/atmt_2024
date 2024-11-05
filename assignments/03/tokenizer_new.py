@@ -12,7 +12,7 @@ pathfr = "/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/raw/test.fr"
 pathpreen ="/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/preprocessed/test.en"
 pathprefr ="/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/preprocessed/test.fr"
 #out_path = "/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/raw/bpe/tokenizer.json"
-out_path ="/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpe/tokenizer.json"
+out_path ="/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/bpe_new/tokenizer.json"
 tokenizer.train(files=[Path, pathfr, pathprefr, pathpreen, "/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/raw/train.fr", "/home/popos/PycharmProjects/atmt_2024_shared/data/en-fr/raw/train.en"], trainer=trainer)
 
 output = tokenizer.encode("je'm appelle Jana found found Hello, y &apos;all! How are you 😁 ? Francaise is my favourite language, I'll get confused")
