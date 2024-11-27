@@ -11,29 +11,19 @@ import pickle
 # base_dir = os.path.join(scripts_dir, "..")
 # sys.path.append(base_dir)
 
+
 from seq2seq import utils
 from seq2seq.data.dictionary import Dictionary
-from tokenizers import Tokenizer
 
-tokenizer = Tokenizer.from_file("data/en-fr/bpe/tokenizer.json")
 SPACE_NORMALIZER = re.compile("\s+")
 
 
 def word_tokenize(line):
-    if args.tokenizer == "bpe":
-        return _bpe_tokenize(line)
-    else:
-        return _word_tokenize(line)
-
-
-def _word_tokenize(line):
     line = SPACE_NORMALIZER.sub(" ", line)
     line = line.strip()
     return line.split()
 
 
-def _bpe_tokenize(line):
-    return tokenizer.encode(line).ids
 
 
 def get_args():
