@@ -53,7 +53,7 @@ class BeamSearch(object):
         node = (node[0], node[2])
 
         return node
-
+    
     def prune(self):
         """ Removes all nodes but the beam_size best ones (lowest neg log prob) """
         nodes = PriorityQueue()
@@ -63,6 +63,19 @@ class BeamSearch(object):
             node = self.nodes.get()
             nodes.put(node)
         self.nodes = nodes
+    '''
+    def prune(self):
+        """ Removes all nodes that have reached the maximum sequence length """
+        nodes = PriorityQueue()
+        for _ in range(self.nodes.qsize()):
+            node = self.nodes.get()
+            if node[2].length >= self.max_len:
+                self.add_final(node[0], node[2])
+            else:
+                if nodes.qsize() < self.beam_size: # make sure not to exceed beam size
+                    nodes.put(node)
+        self.nodes = nodes
+    '''
 
 
 class BeamSearchNode(object):
