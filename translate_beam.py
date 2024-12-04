@@ -15,21 +15,22 @@ from seq2seq.beam import BeamSearch, BeamSearchNode
 
 def get_args():
     """ Defines generation-specific hyper-parameters. """
+
     parser = argparse.ArgumentParser('Sequence to Sequence Model')
-    parser.add_argument('--cuda', default=False, help='Use a GPU')
+    parser.add_argument('--cuda', default=True, help='Use a GPU')
     parser.add_argument('--seed', default=42, type=int, help='pseudo random number generator seed')
 
     # Add data arguments
-    parser.add_argument('--data', default='assignments/03/prepared', help='path to data directory')
-    parser.add_argument('--dicts', required=True, help='path to directory containing source and target dictionaries')
-    parser.add_argument('--checkpoint-path', default='checkpoints_asg4/checkpoint_best.pt', help='path to the model file')
-    parser.add_argument('--batch-size', default=None, type=int, help='maximum number of sentences in a batch')
-    parser.add_argument('--output', default='model_translations.txt', type=str,
+    parser.add_argument('--data', default='data/en-fr/prepared', help='path to data directory')
+    parser.add_argument('--dicts', default='data/en-fr/prepared')  #True, help='path to directory containing source and target dictionaries')
+    parser.add_argument('--checkpoint-path', default='assignments/03/baseline/checkpoints/checkpoint_best.pt', help='path to the model file')
+    parser.add_argument('--batch-size', default=2, type=int, help='maximum number of sentences in a batch')
+    parser.add_argument('--output', default='assignments/05/baseline/translations.txt', type=str,
                         help='path to the output file destination')
     parser.add_argument('--max-len', default=100, type=int, help='maximum length of generated sequence')
 
     # Add beam search arguments
-    parser.add_argument('--beam-size', default=5, type=int, help='number of hypotheses expanded in beam search')
+    parser.add_argument('--beam-size', default=1, type=int, help='number of hypotheses expanded in beam search')
     # alpha hyperparameter for length normalization (described as lp in https://arxiv.org/pdf/1609.08144.pdf equation 14)
     parser.add_argument('--alpha', default=0.0, type=float, help='alpha for softer length normalization')
 
@@ -75,13 +76,16 @@ def main(args):
     for i, sample in enumerate(progress_bar):
 
         # Create a beam search object or every input sentence in batch
-        batch_size = sample['src_tokens'].shape[0]
+        # Encoding of the tokens produced so fare
+        batch_size = sample['src_tokens'].shape[0] # batchsize
         searches = [BeamSearch(args.beam_size, args.max_len - 1, tgt_dict.unk_idx) for i in range(batch_size)]
 
         with torch.no_grad():
             # Compute the encoder output
             encoder_out = model.encoder(sample['src_tokens'], sample['src_lengths'])
             # __QUESTION 1: What is "go_slice" used for and what do its dimensions represent?
+            # go_slice: Tensor 10,1 batch_size? create an eos token for all beams to iniate generation? the models expexts a tgt input but we don t have one yet so we create an artifical one
+
             go_slice = \
                 torch.ones(sample['src_tokens'].shape[0], 1).fill_(tgt_dict.eos_idx).type_as(sample['src_tokens'])
             if args.cuda:
@@ -90,9 +94,11 @@ def main(args):
             #import pdb;pdb.set_trace()
             
             # Compute the decoder output at the first time step
-            decoder_out, _ = model.decoder(go_slice, encoder_out)
+            #
+            decoder_out, _ = model.decoder(go_slice, encoder_out) # go slice is used as generation history fed to the model with the current timestep
+            # decoder ou dim: batchsize, 1, lenvocab,
 
-            # __QUESTION 2: Why do we keep one top candidate more than the beam size?
+            # __QUESTION 2: Why do we keep one top candidate more than the beam size? keep a backup candidate in case the most probale token id reffers to the token  <unk>
             log_probs, next_candidates = torch.topk(torch.log(torch.softmax(decoder_out, dim=2)),
                                                     args.beam_size+1, dim=-1)
 
@@ -107,7 +113,7 @@ def main(args):
                 log_p = torch.where(best_candidate == tgt_dict.unk_idx, backoff_log_p, best_log_p)
                 log_p = log_p[-1]
 
-                # Store the encoder_out information for the current input sentence and beam
+                # Store the encoder_out information for the current input sentence and beam, i refers to item in batch, j to the item in beam size
                 emb = encoder_out['src_embeddings'][:,i,:]
                 lstm_out = encoder_out['src_out'][0][:,i,:]
                 final_hidden = encoder_out['src_out'][1][:,i,:]
@@ -119,7 +125,7 @@ def main(args):
 
                 node = BeamSearchNode(searches[i], emb, lstm_out, final_hidden, final_cell,
                                       mask, torch.cat((go_slice[i], next_word)), log_p, 1)
-                # __QUESTION 3: Why do we add the node with a negative score?
+                # __QUESTION 3: Why do we add the node with a negative score? logits are the negative log so we actually append a positive score???
                 searches[i].add(-node.eval(args.alpha), node)
 
         #import pdb;pdb.set_trace()
@@ -147,7 +153,7 @@ def main(args):
                 # Compute the decoder output by feeding it the decoded sentence prefix
                 decoder_out, _ = model.decoder(prev_words, encoder_out)
 
-            # see __QUESTION 2
+            # see __QUESTION 2 Why do we keep one top candidate more than the beam size? keep a backup candidate in case the most probale token id reffers to the token  <unk>
             log_probs, next_candidates = torch.topk(torch.log(torch.softmax(decoder_out, dim=2)), args.beam_size+1, dim=-1)
 
             # Create number of beam_size next nodes for every current node

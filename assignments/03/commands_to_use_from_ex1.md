@@ -1,16 +1,15 @@
 ## Training
 
 python train.py \
---data data/en-fr/bpenew \
+--data data/en-fr/prepared \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/modelbpe128new/checkpoints \
---encoder-embed-dim 128 \
---encoder-hidden-size 128 \
---decoder-embed-dim 128 \
---decoder-hidden-size 256 \
+--save-dir assignments/03/baselinecheck/checkpoints \
+--encoder-embed-dim 64 \
+--encoder-hidden-size 64 \
+--decoder-embed-dim 64 \
+--decoder-hidden-size 128 \
 --lr 0.0003 \
---max-token 1000 \
 --batch-size 8 \
 --decoder-dropout-in 0.25 \
 --decoder-dropout-out 0.25 \
@@ -22,19 +21,18 @@ python train.py \
 --data data/en-fr/prepared \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/model512/checkpoints \
---encoder-embed-dim 512 \
---encoder-hidden-size 512 \
---decoder-embed-dim 512 \
---decoder-hidden-size 1024 \
+--save-dir assignments/03/model32/checkpoints \
 --max-token 1000 \
 --batch-size 8 \
+--encoder-embed-dim 32 \
+--encoder-hidden-size 32 \
+--decoder-embed-dim 32 \
+--decoder-hidden-size 64 \
 --lr 0.0005 \
 --decoder-dropout-in 0.5 \
 --decoder-dropout-out 0.5 \
 --encoder-dropout-in 0.5 \
 --encoder-dropout-out 0.5 \
---cuda
 
 python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --save-dir assignments/03/model1/checkpoints --arch lstm --encoder-embed-dim 64 --lr 0.0005 --train-on-tiny
 
@@ -42,22 +40,22 @@ python train.py --data data/en-fr/prepared --source-lang fr --target-lang en --s
 ## In-domain Evaluation
 ´´´
 python translate.py \
---data data/en-fr/bpenew \
---dicts data/en-fr/bpenew \
---checkpoint-path assignments/03/modelbpe64new/checkpoints/checkpoint_best.pt \
---output assignments/03/modelbpe64new/translations.txt \
+--data data/en-fr/prepared \
+--dicts data/en-fr/prepared \
+--checkpoint-path assignments/03/model32/checkpoints/checkpoint_best.pt \
+--output assignments/03/baselinecheck/translations.txt \
 --cuda \
 --batch-size 25
 ´´´
 
 ## postprocess
 bash scripts/postprocess.sh \
-assignments/03/modelbpe64new/translations.txt \
-assignments/03/modelbpe64new/translations.p.txt en
+assignments/03/baselinecheck/translations.txt \
+assignments/03/baselinecheck/translations.p.txt en
 
 eval sacrebleu
 cat \
-assignments/03/model128/translations.p.txt \
+assignments/03/modelbpe64/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en
 
 
@@ -88,3 +86,7 @@ python preprocess.py \
     --threshold-tgt 1 \
     --num-words-src 4000 \
     --num-words-tgt 4000
+
+
+    train.py --data /home/user/haller/2022HS/atmt/tests/assignment_03/../../data/en-fr//prepared/ --source-lang fr --target-lang en --save-dir /home/user/haller/2022HS/atmt/tests/assignment_03/baseline/checkpoints --cuda True
+INFO: A
