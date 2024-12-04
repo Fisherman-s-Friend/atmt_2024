@@ -40,6 +40,10 @@ def get_args():
 def main(args):
     """ Main translation function' """
     # Load arguments from checkpoint
+
+    if args.beam_size > 1:
+        args.output = args.output.replace('baseline', 'beam_{0}'.format(args.beam_size))
+
     torch.manual_seed(args.seed)
     state_dict = torch.load(args.checkpoint_path, map_location=lambda s, l: default_restore_location(s, 'cpu'))
     args_loaded = argparse.Namespace(**{**vars(state_dict['args']), **vars(args)})
@@ -64,8 +68,12 @@ def main(args):
                                                                          seed=args.seed))
     # Build model and criterion
     model = models.build_model(args, src_dict, tgt_dict)
-    if args.cuda:
+
+    if args.cuda and args.cuda != 'False' and torch.cuda.is_available():
         model = model.cuda()
+    else:
+        model = model.cpu()
+
     model.eval()
     model.load_state_dict(state_dict['model'])
     logging.info('Loaded a model from checkpoint {:s}'.format(args.checkpoint_path))
@@ -225,6 +233,10 @@ def main(args):
 
 
     # Write to file
+    folder = "/".join(args.output.split('/')[:-1])
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
     if args.output is not None:
         with open(args.output, 'w') as out_file:
             for sent_id in range(len(all_hyps.keys())):
