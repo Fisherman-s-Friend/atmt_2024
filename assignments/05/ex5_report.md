@@ -32,3 +32,14 @@ For this, we alter the "prune" function in "beam.py", row 57. Instead of changin
 The BLEU score (19.1) and its split was exactly the same, meaning also all the chosen translations were the same. The times, however, were very different. The original method took only 21 seconds, while the modified method took 6 minutes and 22 seconds. Based on this experiment, keeping the beam size does not make sense at all. We end up with a bunch of overly long and therefore unlikely translations, and the one that would be chosen with a changing beam is chosen anyways.
 
 ### 3.3 Implementing a Stopping Criterion with Pruning
+
+We altered the prune function in "beam.py" such that it checks for finished sentences and extracts the probability score of the best one in "best_final_score" 
+if no sentences has been finished yet, we set the score to infinity to still have a value to compare to.
+If the probability of the current node is worse than the best_final_score we discard the node (and all following ones, as they are going to be worse), 
+otherwise we keep beam_size nodes in the queue.
+
+In regard to the other three pruning methods, the BLEU score (19.1)  were exactly the same, meaning also all the chosen translations were the same (We also checked the actual translation and could find any difference.)
+The time improved slightly on my computer (16 second for original, and 13 seconds for stopping criterion with pruning).
+
+The pruning-based stopping criterion can lead to faster, high quality translations by focusing on the most promising sequences. This can prevent the model from exploring less likely sequences that could lead to suboptimal translations.
+However, if the pruning is too aggressive, it might discard sequences that could have led to better translations if given more time to develop.

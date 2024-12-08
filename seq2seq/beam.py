@@ -66,7 +66,7 @@ class BeamSearch(object):
             if node[0] < best_final_score:
                 nodes.put(node)
             if nodes.qsize() >= self.beam_size:
-                break
+                    break
 
         self.nodes = nodes
     '''
