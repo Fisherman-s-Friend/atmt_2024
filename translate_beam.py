@@ -2,6 +2,7 @@ import os
 import logging
 import argparse
 import numpy as np
+from attr.validators import max_len
 from tqdm import tqdm
 
 import torch
@@ -53,7 +54,7 @@ def get_args():
     # Add beam search arguments
     parser.add_argument(
         "--beam-size",
-        default=1,
+        default=3,
         type=int,
         help="number of hypotheses expanded in beam search",
     )
@@ -144,7 +145,7 @@ def main(args):
             # Compute the encoder output
             encoder_out = model.encoder(sample["src_tokens"], sample["src_lengths"])
             # __QUESTION 1: What is "go_slice" used for and what do its dimensions represent?
-            # go_slice: Tensor 10,1 batch_size? create an eos token for all beams to iniate generation? the models expexts a tgt input but we don t have one yet so we create an artifical one
+            # go_slice: Tensor 10,1 batch_size? create an eos token for all beams to initiate generation? the models except a tgt input but we don t have one yet so we create an artifical one
 
             go_slice = (
                 torch.ones(sample["src_tokens"].shape[0], 1)
@@ -163,7 +164,7 @@ def main(args):
             )  # go slice is used as generation history fed to the model with the current timestep
             # decoder ou dim: batchsize, 1, lenvocab,
 
-            # __QUESTION 2: Why do we keep one top candidate more than the beam size? -> We keep a backup candidate in case the most probale token id reffers to the token  <unk>
+            # __QUESTION 2: Why do we keep one top candidate more than the beam size? -> We keep a backup candidate in case the most probable token id refers to the token  <unk>
             log_probs, next_candidates = torch.topk(
                 torch.log(torch.softmax(decoder_out, dim=2)), args.beam_size + 1, dim=-1
             )
@@ -238,7 +239,7 @@ def main(args):
                 # Compute the decoder output by feeding it the decoded sentence prefix
                 decoder_out, _ = model.decoder(prev_words, encoder_out)
 
-            # see question 2 Why do we keep one top candidate more than the beam size? keep a backup candidate in case the most probale token id reffers to the token  <unk>
+            # see question 2 Why do we keep one top candidate more than the beam size? keep a backup candidate in case the most probable token id refers to the token  <unk>
             log_probs, next_candidates = torch.topk(
                 torch.log(torch.softmax(decoder_out, dim=2)), args.beam_size + 1, dim=-1
             )

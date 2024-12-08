@@ -18,7 +18,7 @@ cf. "translate_beam.py".
 
 ### 3.1 Understanding the current stopping condition
 
-The "add_final" function in "beam.py" (row 24) is responsible for putting the a finished sequence on to the queue of final hypotheses, after having padded it to make sure all hypotheses have the same length. It is called in row 193 in "translate_beam.py" if the last index is the EOS-token, which means that that hypothesis is done.
+The "add_final" function in "beam.py" (row 24) is responsible for putting  a finished sequence on to the queue of final hypotheses, after having padded it to make sure all hypotheses have the same length. It is called in row 193 in "translate_beam.py" if the last index is the EOS-token, which means that that hypothesis is done.
 
 The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam.py" (row 57). There, we reassign our nodes-to-be-expanded-stack, putting only the top #beam_size-finished nodes onto the stack. In terms of why this should make sense, I would explain it as follows:
 
@@ -30,3 +30,5 @@ The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam
 For this, we alter the "prune" function in "beam.py", row 57. Instead of changing the effective beam size by truncating the queue of unfinished nodes at #beam_size-finished (old "prune" function, row 62), we keep said queue at a max of length beam_size (row 75) and only move nodes from there to the finished queue if they reach the max length (row 72).
 
 The BLEU score (19.1) and its split was exactly the same, meaning also all the chosen translations were the same. The times, however, were very different. The original method took only 21 seconds, while the modified method took 6 minutes and 22 seconds. Based on this experiment, keeping the beam size does not make sense at all. We end up with a bunch of overly long and therefore unlikely translations, and the one that would be chosen with a changing beam is chosen anyways.
+
+### 3.3 Implementing a Stopping Criterion with Pruning
