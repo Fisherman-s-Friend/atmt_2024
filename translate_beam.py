@@ -127,7 +127,7 @@ def main(args):
     model.eval()
     model.load_state_dict(state_dict["model"])
     logging.info("Loaded a model from checkpoint {:s}".format(args.checkpoint_path))
-    progress_bar = tqdm(test_loader, desc="| Generation", leave=False)
+    progress_bar = tqdm(test_loader, desc="| Generation", leave=False, file=open(f'{args.output}_log', 'w'))
 
     # Iterate over the test set
     all_hyps = {}

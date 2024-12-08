@@ -54,7 +54,7 @@ class BeamSearch(object):
 
         return node
 
-    '''
+
     def prune(self):
         """ Removes all nodes but the ones having a better probability that the current best finished one """
 
@@ -98,8 +98,8 @@ class BeamSearch(object):
             node = self.nodes.get()
             nodes.put(node)
         self.nodes = nodes
-
-
+    
+    '''
 class BeamSearchNode(object):
     """ Defines a search node and stores values important for computation of beam search path"""
     def __init__(self, search, emb, lstm_out, final_hidden, final_cell, mask, sequence, logProb, length):
