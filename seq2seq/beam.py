@@ -53,9 +53,10 @@ class BeamSearch(object):
         node = (node[0], node[2])
 
         return node
-    
+
+    '''
     def prune(self):
-        """ Removes all nodes but the beam_size best ones (lowest neg log prob) """
+        """ Removes all nodes but the ones having a better probability that the current best finished one """
 
         nodes = PriorityQueue()
         finished = self.final.qsize()
@@ -68,38 +69,26 @@ class BeamSearch(object):
                 break
 
         self.nodes = nodes
-       # nodes = PriorityQueue()
-       # #print(nodes)
-       # # Keep track of how many search paths are already finished (EOS)
-       # finished = self.final.qsize()
-       # final_logp = -10000
-       # if finished >=1:
-       #     final = self.final.get()
-       #     final_logp = final[2].logp
-       # for _ in range(self.beam_size):
-       #     node = self.nodes.get()
-       #     if node[2].logp >= final_logp:
-       #         nodes.put(node)
-       #     else:
-       #         self.nodes = nodes
-       # self.nodes = nodes
-
-
     '''
+
+
     def prune(self):
-        """ Removes all nodes that have reached the maximum sequence length """
+        """ Removes all nodes that have reached the maximum sequence length
         nodes = PriorityQueue()
         for _ in range(self.nodes.qsize()):
             node = self.nodes.get()
             if node[2].length >= self.max_len:
-                self.add_final(node[0], node[2])
+                break
+                #self.add_final(node[0], node[2])
             else:
                 if nodes.qsize() < self.beam_size: # make sure not to exceed beam size
                     nodes.put(node)
         self.nodes = nodes
-    '''
-    '''    
+
+
+
     def prune(self):
+    """
         """ Removes all nodes but the beam_size best ones (lowest neg log prob) """
         nodes = PriorityQueue()
         #print(nodes)
@@ -108,7 +97,7 @@ class BeamSearch(object):
         for _ in range(self.beam_size-finished):
             node = self.nodes.get()
             nodes.put(node)
-        self.nodes = nodes'''
+        self.nodes = nodes
 
 
 class BeamSearchNode(object):

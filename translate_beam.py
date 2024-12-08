@@ -162,7 +162,7 @@ def main(args):
             decoder_out, _ = model.decoder(
                 go_slice, encoder_out
             )  # go slice is used as generation history fed to the model with the current timestep
-            # decoder ou dim: batchsize, 1, lenvocab,
+            # decoder out dim: batchsize, 1, lenvocab,
 
             # __QUESTION 2: Why do we keep one top candidate more than the beam size? -> We keep a backup candidate in case the most probable token id refers to the token  <unk>
             log_probs, next_candidates = torch.topk(
@@ -242,10 +242,10 @@ def main(args):
             # see question 2 Why do we keep one top candidate more than the beam size? keep a backup candidate in case the most probable token id refers to the token  <unk>
             log_probs, next_candidates = torch.topk(
                 torch.log(torch.softmax(decoder_out, dim=2)), args.beam_size + 1, dim=-1
-            )
+            ) # batchsize, previous_words, beamsize + 1 ?topk beamsize plus 1
 
             # Create number of beam_size next nodes for every current node
-            for i in range(log_probs.shape[0]):
+            for i in range(log_probs.shape[0]): # i is batch size times beam size - final nodes
                 for j in range(args.beam_size):
 
                     best_candidate = next_candidates[i, :, j]
@@ -311,7 +311,7 @@ def main(args):
             # We remove all nodes that are not in the top #beam_size nodes
             # The nodes are stored in a priority queue, they are sorted by their score
 
-            for search in searches:
+            for search in searches: # num of searches is batch size
                search.prune()
 
         # Segment into sentences
