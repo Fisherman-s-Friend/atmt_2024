@@ -1,7 +1,7 @@
 # ATMT Exercise 5
 
 Jana Hofmann & Dominic Fischer
-(Github Repo)[https://github.com/Fisherman-s-Friend/atmt_2024/tree/main/assignments/05]
+Github Repo: https://github.com/Fisherman-s-Friend/atmt_2024/tree/main/assignments/05
 
 ## 1. Experimenting with Beam Search
 
@@ -11,7 +11,7 @@ In terms of BLEU scores, we see the trend that we would have expected: a bigger 
 
 Interestingly, the brevity penalty drops (= the translations get shorter) as the beam size increases. We explain this as follows: the more we increase the beam size, the more emphasis we put on high probability. Tokens probabilities are chained together and, because they are mostly less than one, the longer a sequence, the less probable. Therefore, shorter sequences are favoured. Furthermore, language tends to favour short tokens for reasons of economy, thus short tokens are more probable and will also be favoured by the model.
 
-In regrad to decoding time, it increased roughly linearly with the beam_size.
+As far as the decoding time is concerned, it increased approximately linearly with the beam size.
 
 ## 2. Understanding the Code
 
