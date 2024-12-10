@@ -1,6 +1,7 @@
 # ATMT Exercise 5
 
 Jana Hofmann & Dominic Fischer
+(Github Repo)[https://github.com/Fisherman-s-Friend/atmt_2024/tree/main/assignments/05]
 
 ## 1. Experimenting with Beam Search
 
