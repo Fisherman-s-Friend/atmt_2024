@@ -145,7 +145,7 @@ def main(args):
             # Compute the encoder output
             encoder_out = model.encoder(sample["src_tokens"], sample["src_lengths"])
             # __QUESTION 1: What is "go_slice" used for and what do its dimensions represent?
-            # go_slice: Tensor 10,1 batch_size? create an eos token for all beams to initiate generation? the models except a tgt input but we don t have one yet so we create an artifical one
+            # go_slice: Tensor batch_size, 1. create an eos token for all beams to initiate generation? the models except a tgt input but we don't have one yet so we create an artifical one
 
             go_slice = (
                 torch.ones(sample["src_tokens"].shape[0], 1)
