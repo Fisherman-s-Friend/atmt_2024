@@ -33,7 +33,8 @@ The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam
 ### 3.2 Implementing a Constant Beam Size Stopping Criterion
 
 For this, we alter the "prune" function in "beam.py", row 57. Instead of changing the effective beam size by truncating the queue of unfinished nodes at #beam_size-finished (old "prune" function, row 62), we keep said queue at a max of length beam_size (row 75) and only move nodes from there to the finished queue if they reach the max length (row 72).
-
+Prune function with Constant Beam size : https://github.com/Fisherman-s-Friend/atmt_2024/blob/5b537d6eb3579be7c1e143c537a91e97f3dde7e0/seq2seq/beam.py#L80-L81
+Old prune function: 
 The BLEU score (19.1) and its split was exactly the same, meaning also all the chosen translations were the same. The times, however, were very different. The original method took only 21 seconds, while the modified method took 6 minutes and 22 seconds. Based on this experiment, keeping the beam size does not make sense at all. We end up with a bunch of overly long and therefore unlikely translations, and the one that would be chosen with a changing beam is chosen anyways.
 
 ### 3.3 Implementing a Stopping Criterion with Pruning
