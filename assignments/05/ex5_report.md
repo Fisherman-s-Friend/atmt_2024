@@ -34,7 +34,10 @@ The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam
 For this, we alter the "prune" function in "beam.py". Instead of changing the effective beam size by truncating the queue of unfinished nodes at #beam_size-finished (old "prune" function), we keep said queue at a max of length beam_size and only remove nodes from the queue if they reach the maximum length.
 
 Prune function with Constant Beam size : https://github.com/Fisherman-s-Friend/atmt_2024/blob/5b537d6eb3579be7c1e143c537a91e97f3dde7e0/seq2seq/beam.py#L80-L81
-Old prune function: https://github.com/Fisherman-s-Friend/atmt_2024/blob/5b537d6eb3579be7c1e143c537a91e97f3dde7e0/seq2seq/beam.py#L91-L92
+
+
+Old prune function: https://github.com/Fisherman-s-Friend/atmt_2024/blob/a8d8f0f080218b365146332463b3195b62a8ebf2/seq2seq/beam.py#L91-L93
+
 
 The BLEU score (19.1) and its split was exactly the same, meaning also all the chosen translations were the same. The times, however, were very different. The original method took only 21 seconds, while the modified method took 6 minutes and 22 seconds. Based on this experiment, keeping the beam size does not make sense at all. We end up with a bunch of overly long and therefore unlikely translations, and the one that would be chosen with a changing beam is chosen anyways.
 
