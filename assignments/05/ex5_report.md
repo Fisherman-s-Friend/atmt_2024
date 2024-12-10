@@ -41,7 +41,7 @@ The BLEU score (19.1) and its split was exactly the same, meaning also all the c
 We altered the prune function in "beam.py" such that it checks for finished sentences and extracts the probability score of the best one in "best_final_score" 
 if no sentences has been finished yet, we set the score to infinity to still have a value to compare to.
 If the probability of the current node is worse than the best_final_score we discard the node (and all following ones, as they are going to be worse), 
-otherwise we keep beam_size nodes in the queue.
+otherwise we keep beam_size nodes in the queue. https://github.com/Fisherman-s-Friend/atmt_2024/blob/0a93c6f51ff0355047f86d6b5fb1dd6634d801f6/seq2seq/beam.py#L60
 
 In regard to the other methods, the BLEU score (19.1)  was exactly the same for all three of them, meaning also all the chosen translations were the same (We also checked the actual translation and could not find any difference.)
 The time improved slightly on my computer (19 seconds for original, and 16 seconds for stopping criterion with pruning). In our experiment, the stopping criterion with pruning was the best one. It is a good trade-off between speed and quality, 
