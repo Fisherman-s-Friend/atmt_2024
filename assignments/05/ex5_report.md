@@ -10,9 +10,12 @@ In terms of BLEU scores, we see the trend that we would have expected: a bigger 
 
 Interestingly, the brevity penalty drops (= the translations get shorter) as the beam size increases. We explain this as follows: the more we increase the beam size, the more emphasis we put on high probability. Tokens probabilities are chained together and, because they are mostly less than one, the longer a sequence, the less probable. Therefore, shorter sequences are favoured. Furthermore, language tends to favour short tokens for reasons of economy, thus short tokens are more probable and will also be favoured by the model.
 
+In regrad to decoding time, it increased roughly linearly with the beam_size.
+
 ## 2. Understanding the Code
 
 cf. "translate_beam.py".
+
 
 ## 3. Exploring Stopping Criteria in Beam Search
 
@@ -43,10 +46,8 @@ The time improved slightly on my computer (19 seconds for original, and 16 secon
 as it is faster than the original method and still produces the same results.
 
 If we assume that all incomplete hypotheses are strictly worse than the best finished hypothesis (e.g., probabilities of later completions cannot recover), then pruning is optimal.
-If this is not the case, the method might discard a hypothesis that would have been able to produce an overall better probability done the line than the best one found so far. However, in practice, this would mean that the model would have to explore a lot of unlikely hypotheses, which would be computationally more expensive.
+If this is not the case, the method might discard a hypothesis that would have been able to produce an overall better probability down the line than the best one found so far. However, in practice, this would mean that the model would have to explore a lot of unlikely hypotheses, which would be computationally more expensive.
 
-The pruning-based stopping criterion can lead to faster, high quality translations by focusing on the most promising sequences. This can prevent the model from exploring less likely sequences that could lead to suboptimal translations.
-However, if the pruning is too aggressive, it might discard sequences that could have led to better translations if given more time to develop.
 
 ### Comparision of the three stopping criteria
 
@@ -59,4 +60,4 @@ In our experiment, the pruning stopping criterion performed the best. It provide
 
 Pruning is efficient, focusing on high-scoring hypotheses, but it may lose diversity. This method works best in scenarios where the model is confident in its predictions and the best hypotheses are likely to be found early.
 The dynamically adapting beam size stopping criterion maintains more diversity and can recover from intermediate steps where the current best hypothesis might be suboptimal. However, it is slower than the pruning method.
-The constant beam size with a maximum length stopping criterion is inefficient but preserves the most diversity. It may be useful in cases where word order differs significantly between the source and target languages.
+The constant beam size with a maximum length stopping criterion is inefficient but preserves the most diversity. It may be useful in cases where for example word order differs significantly between the source and target languages, or we translate very domain specifically.
