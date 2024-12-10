@@ -18,12 +18,11 @@ As far as the decoding time is concerned, it increased approximately linearly wi
 
 cf. "translate_beam.py".
 
-
 ## 3. Exploring Stopping Criteria in Beam Search
 
 ### 3.1 Understanding the current stopping condition
 
-The "add_final" function in "beam.py" (row 24) is responsible for putting  a finished sequence on to the queue of final hypotheses, after having padded it to make sure all hypotheses have the same length. It is called in row 193 in "translate_beam.py" if the last index is the EOS-token, which means that that hypothesis is done.
+The "add_final" function in "beam.py" (row 24) is responsible for putting a finished sequence on to the queue of final hypotheses, after having padded it to make sure all hypotheses have the same length. It is called in row 193 in "translate_beam.py" if the last index is the EOS-token, which means that that hypothesis is done.
 
 The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam.py" (row 57). There, we reassign our nodes-to-be-expanded-stack, putting only the top #beam_size-finished nodes onto the stack. In terms of why this should make sense, I would explain it as follows:
 
@@ -32,25 +31,24 @@ The beam size is reduced as "translate_beam.py" (row 216) calls "prune" in "beam
 
 ### 3.2 Implementing a Constant Beam Size Stopping Criterion
 
-For this, we alter the "prune" function in "beam.py", row 57. Instead of changing the effective beam size by truncating the queue of unfinished nodes at #beam_size-finished (old "prune" function, row 62), we keep said queue at a max of length beam_size (row 75) and only move nodes from there to the finished queue if they reach the max length (row 72).
+For this, we alter the "prune" function in "beam.py". Instead of changing the effective beam size by truncating the queue of unfinished nodes at #beam_size-finished (old "prune" function), we keep said queue at a max of length beam_size and only remove nodes from the queue if they reach the maximum length.
+
 Prune function with Constant Beam size : https://github.com/Fisherman-s-Friend/atmt_2024/blob/5b537d6eb3579be7c1e143c537a91e97f3dde7e0/seq2seq/beam.py#L80-L81
-Old prune function: 
+Old prune function: https://github.com/Fisherman-s-Friend/atmt_2024/blob/5b537d6eb3579be7c1e143c537a91e97f3dde7e0/seq2seq/beam.py#L91-L92
+
 The BLEU score (19.1) and its split was exactly the same, meaning also all the chosen translations were the same. The times, however, were very different. The original method took only 21 seconds, while the modified method took 6 minutes and 22 seconds. Based on this experiment, keeping the beam size does not make sense at all. We end up with a bunch of overly long and therefore unlikely translations, and the one that would be chosen with a changing beam is chosen anyways.
 
 ### 3.3 Implementing a Stopping Criterion with Pruning
 
-We altered the prune function in "beam.py" such that it checks for finished sentences and extracts the probability score of the best one in "best_final_score" 
-if no sentences has been finished yet, we set the score to infinity to still have a value to compare to.
-If the probability of the current node is worse than the best_final_score we discard the node (and all following ones, as they are going to be worse), 
-otherwise we keep beam_size nodes in the queue. https://github.com/Fisherman-s-Friend/atmt_2024/blob/0a93c6f51ff0355047f86d6b5fb1dd6634d801f6/seq2seq/beam.py#L60
+We altered the prune function in "beam.py" such that it checks for finished sentences and extracts the probability score of the best one as "best_final_score". If no sentences have been finished yet, we set the score to infinity to still have a value to compare to.
+If the probability of the current node is worse than the "best_final_score", we discard the node (and all following ones, as they are going to be worse). Otherwise, we keep beam_size nodes in the queue. https://github.com/Fisherman-s-Friend/atmt_2024/blob/0a93c6f51ff0355047f86d6b5fb1dd6634d801f6/seq2seq/beam.py#L60
 
-In regard to the other methods, the BLEU score (19.1)  was exactly the same for all three of them, meaning also all the chosen translations were the same (We also checked the actual translation and could not find any difference.)
-The time improved slightly on my computer (19 seconds for original, and 16 seconds for stopping criterion with pruning). In our experiment, the stopping criterion with pruning was the best one. It is a good trade-off between speed and quality, 
+In regard to the other methods, the BLEU score (19.1) was exactly the same for all three of them, meaning also all the chosen translations were the same (We also checked the actual translation and could not find any difference.)
+The time improved slightly on my computer (19 seconds for original, and 16 seconds for stopping criterion with pruning). In our experiment, the stopping criterion with pruning was the best one. It is a good trade-off between speed and quality,
 as it is faster than the original method and still produces the same results.
 
 If we assume that all incomplete hypotheses are strictly worse than the best finished hypothesis (e.g., probabilities of later completions cannot recover), then pruning is optimal.
 If this is not the case, the method might discard a hypothesis that would have been able to produce an overall better probability down the line than the best one found so far. However, in practice, this would mean that the model would have to explore a lot of unlikely hypotheses, which would be computationally more expensive.
-
 
 ### Comparision of the three stopping criteria
 
